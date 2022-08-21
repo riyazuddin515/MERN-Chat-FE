@@ -1,16 +1,12 @@
-import React, { useEffect } from 'react'
-import axios from 'axios'
+import React from 'react'
+import Header from '../components/Header'
 
 const Home = () => {
-    useEffect(() => {
-        const fetch = async () => {
-            const res = await axios.get('/chat');
-            console.log(res)
-        }
-        fetch()
-    })
+
     return (
-        <h1>Hello</h1>
+        <div>
+            <Header />
+        </div>
     )
 }
 
