@@ -79,7 +79,6 @@ const SearchDrawer = () => {
                     position: "bottom-left",
                 });
             }
-            setLoading(false)
         } catch (error) {
             toast({
                 title: "Error Occured!",
@@ -89,6 +88,29 @@ const SearchDrawer = () => {
                 isClosable: true,
                 position: "bottom-left",
             });
+        }
+        setLoading(false)
+    }
+
+    const hanldeOnUserClick = async (id) => {
+        console.log('click', id);
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${loggedInUser.token}`,
+                },
+            };
+            const res = await axios.post('/chat', { userId: id }, config)
+            console.log(res);
+        } catch (error) {
+            toast({
+                title: 'Error Occured',
+                description: error.response.data,
+                status: 'error',
+                duration: 2000,
+                isClosable: false,
+                position: 'bottom-left'
+            })
         }
     }
 
@@ -137,7 +159,7 @@ const SearchDrawer = () => {
                             loading ?
                                 <ChatLoading /> :
                                 searchResult.map(user => (
-                                    <UserItem key={user._id} user={user} />
+                                    <UserItem key={user._id} user={user} handleOnUserClick={hanldeOnUserClick} />
                                 ))
                         }
                     </DrawerBody>

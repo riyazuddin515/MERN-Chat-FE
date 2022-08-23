@@ -51,18 +51,17 @@ const Signup = ({ isSignup }) => {
     }
 
     const auth = async () => {
-        if (isSignup) {
-            console.log('signup begin')
-            setLoading(true)
-            const res = await axios.post(
-                '/auth/signup',
-                {
-                    "name": name,
-                    "email": email,
-                    "password": password
-                }
-            )
-            if (res.data?.success) {
+        try {
+            if (isSignup) {
+                setLoading(true)
+                const res = await axios.post(
+                    '/auth/signup',
+                    {
+                        "name": name,
+                        "email": email,
+                        "password": password
+                    }
+                )
                 toast({
                     title: 'Success',
                     description: 'Account created.',
@@ -71,20 +70,17 @@ const Signup = ({ isSignup }) => {
                     isClosable: false
                 })
                 localStorage.setItem('user', JSON.stringify(res.data))
-                setLoading(false)
                 navigate('/', { replace: true })
-            }
-        } else {
-            console.log('login begin')
-            setLoading(true)
-            const res = await axios.post(
-                '/auth/login',
-                {
-                    "email": email,
-                    "password": password
-                }
-            )
-            if (res.data?.success) {
+            } else {
+                console.log('login begin')
+                setLoading(true)
+                const res = await axios.post(
+                    '/auth/login',
+                    {
+                        "email": email,
+                        "password": password
+                    }
+                )
                 toast({
                     title: 'Success',
                     description: 'Logged in.',
@@ -93,10 +89,18 @@ const Signup = ({ isSignup }) => {
                     isClosable: false
                 })
                 localStorage.setItem('user', JSON.stringify(res.data))
-                setLoading(false)
                 navigate('/', { replace: true })
             }
+        } catch (error) {
+            toast({
+                title: 'Error Occured',
+                description: error.response.data,
+                status: 'error',
+                duration: 2000,
+                isClosable: false
+            })
         }
+        setLoading(false)
     }
 
     return (
