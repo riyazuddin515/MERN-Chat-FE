@@ -3,18 +3,18 @@ import {
     Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton,
     MenuButton, MenuList, MenuItem, Menu,
     Box, Button, Input, IconButton, Heading, Avatar,
-    useDisclosure, useToast
+    useDisclosure, useToast, Spinner, Tooltip
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { BellIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'
-import { ChatContext } from '../ChatContext'
+import { ChatContext } from '../context/ChatContext'
 import axios from 'axios'
 import UserItem from './UserItem'
 import ChatLoading from './ChatLoading'
 
 const SearchDrawer = () => {
 
-    const { loggedInUser } = useContext(ChatContext)
+    const { loggedInUser, chat, setChat, setSelectedChat } = useContext(ChatContext)
 
     const navigate = useNavigate()
     const toast = useToast()
@@ -93,15 +93,18 @@ const SearchDrawer = () => {
     }
 
     const hanldeOnUserClick = async (id) => {
-        console.log('click', id);
         try {
             const config = {
                 headers: {
                     Authorization: `Bearer ${loggedInUser.token}`,
                 },
             };
-            const res = await axios.post('/chat', { userId: id }, config)
-            console.log(res);
+            const { data } = await axios.post('/chat', { userId: id }, config)
+            setSelectedChat(data)
+            if (!chat.find(eachChat => eachChat._id === data._id)) {
+                setChat([data, ...chat])
+            }
+            onClose()
         } catch (error) {
             toast({
                 title: 'Error Occured',
@@ -114,17 +117,34 @@ const SearchDrawer = () => {
         }
     }
 
+    if (!loggedInUser) {
+        return (
+            <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='green'
+                size='xl'
+            />
+        )
+    }
+
     return (
         <>
             <Box width='100%' p={2}
                 backgroundColor='white'
-                display='flex' justifyContent='space-between'>
-                <Button leftIcon={<SearchIcon />} colorScheme='teal'
-                    variant='outline' onClick={onOpen} ref={btnRef}>
-                    Search User
-                </Button>
-                <Heading>MERN Chat</Heading>
+                display='flex' justifyContent='space-between' alignItems='center'>
+                <Heading size={['sm', 'md', 'lg', 'xl']}>MERN Chat</Heading>
                 <Box>
+                    <Tooltip label='Search Users'>
+                        <IconButton
+                            icon={<SearchIcon color='green' />}
+                            marginRight={3}
+                            backgroundColor='transparent'
+                            border='1px solid green'
+                            onClick={onOpen} ref={btnRef}
+                        />
+                    </Tooltip>
                     <IconButton icon={<BellIcon />} marginRight={3} />
                     <Menu>
                         <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -139,7 +159,7 @@ const SearchDrawer = () => {
             </Box>
             <Drawer
                 isOpen={isOpen}
-                placement='left'
+                placement='right'
                 onClose={() => {
                     onClose()
                     handleClose()

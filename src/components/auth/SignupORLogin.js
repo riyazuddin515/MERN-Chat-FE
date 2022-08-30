@@ -128,7 +128,7 @@ const Signup = ({ isSignup }) => {
                 </FormControl>
             }
             <FormControl>
-                <Button mt='10px' colorScheme='teal' type='submit' width='100%'
+                <Button mt='10px' colorScheme='green' color='white' type='submit' width='100%'
                     onClick={(e) => handleForm(e)} isLoading={loading}>{isSignup ? 'Signup' : 'Login'}</Button>
             </FormControl>
         </VStack>

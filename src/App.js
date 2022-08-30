@@ -1,8 +1,7 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home'
-import Chat from './pages/Chat'
-import Auth from './components/Auth';
+import Auth from './components/auth/Auth';
 
 function App() {
   return (
@@ -10,7 +9,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path='/auth' element={<Auth />} />
-        <Route path="/chat" element={<Chat />} />
       </Routes>
     </div>
   );
