@@ -6,6 +6,7 @@ import { ChatState } from '../context/ChatContext'
 import { getOtherUser } from '../utils/getOtherUser'
 import SingleMessage from './SingleMessage'
 import { io } from 'socket.io-client'
+import ProfileModal from './ProfileModal'
 let socket = io('http://localhost:4000');
 
 const ChatBox = () => {
@@ -131,7 +132,9 @@ const ChatBox = () => {
                                 onClick={() => setSelectedChat(null)}
                             />
                             <Heading size='lg'>{selectedChat.isGroupChat ? selectedChat.chatName : getOtherUser(loggedInUser, selectedChat.users).name}</Heading>
-                            <IconButton icon={<InfoIcon />} />
+                            <ProfileModal user={getOtherUser(loggedInUser, selectedChat.users)}>
+                                <IconButton icon={<InfoIcon />} />
+                            </ProfileModal>
                         </Box>
                         <Box
                             w="100%" h="100%" p={3} mb={2}

@@ -11,7 +11,7 @@ import { ChatContext } from '../context/ChatContext'
 import axios from 'axios'
 import UserItem from './UserItem'
 import ChatLoading from './ChatLoading'
-import ProfileModal from './auth/ProfileModal'
+import ProfileModal from './ProfileModal'
 
 const SearchDrawer = () => {
 
@@ -152,7 +152,7 @@ const SearchDrawer = () => {
                             <Avatar src={loggedInUser.profilePic} name={loggedInUser.name} size='sm' />
                         </MenuButton>
                         <MenuList>
-                            <ProfileModal loggedInUser={loggedInUser}>
+                            <ProfileModal user={loggedInUser} isLoggedInUserProfile={true}>
                                 <MenuItem>My Profile</MenuItem>
                             </ProfileModal>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
