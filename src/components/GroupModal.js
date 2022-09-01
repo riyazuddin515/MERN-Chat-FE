@@ -22,7 +22,7 @@ import { ChatState } from '../context/ChatContext'
 import UserItem from './UserItem'
 import { CloseIcon } from '@chakra-ui/icons'
 
-const GroupModal = ({ children }) => {
+const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
 
     const toast = useToast()
     const { loggedInUser } = ChatState()
@@ -79,7 +79,7 @@ const GroupModal = ({ children }) => {
         setSelectedUsers(selectedUsers.filter(each => each._id !== user._id))
     }
 
-    const createGroup = () => {
+    const createGroup = async () => {
         if (!groupName) {
             toast({
                 title: "Group Name can't be empty.",
@@ -100,7 +100,29 @@ const GroupModal = ({ children }) => {
             });
             return
         }
-        console.log('processing')
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${loggedInUser.token}`,
+                },
+            };
+            const { data } = await axios.post('/chat/newGroup', { chatName: groupName, users: JSON.stringify(selectedUsers) }, config)
+            setSelectedChat(data)
+            if (!chat.find(eachChat => eachChat._id === data._id)) {
+                setChat([data, ...chat])
+            }
+            onClose()
+        } catch (error) {
+            console.log(error)
+            toast({
+                title: 'Error Occured',
+                description: error.response.data,
+                status: 'error',
+                duration: 2000,
+                isClosable: false,
+                position: 'bottom-left'
+            })
+        }
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure()

@@ -48,7 +48,7 @@ const MyChat = () => {
         >
             <Box display='flex' justifyContent='space-between' alignItems='center'>
                 <Heading size='md'>My Chats</Heading>
-                <GroupModal>
+                <GroupModal chat={chat} setChat={setChat} setSelectedChat={setSelectedChat}>
                     <Button leftIcon={<AddIcon />}>New Group</Button>
                 </GroupModal>
             </Box>
@@ -60,10 +60,12 @@ const MyChat = () => {
                         return <Box key={each._id} width='100%' display='flex' alignItems='center' gap={2}
                             backgroundColor={selectedChat === each ? 'green' : '#E8E8E8'}
                             color={selectedChat === each ? 'white' : 'black'}
-                            borderRadius='md' mb={2} p={3} cursor='pointer'
+                            borderRadius='md' p={3} cursor='pointer'
                             onClick={() => setSelectedChat(each)}
                         >
-                            <Avatar src={otherUser.profilePic} name={otherUser.name} size='sm' />
+                            <Avatar
+                                // src={otherUser.profilePic}
+                                name={each.isGroupChat ? each.chatName : otherUser.name} size='sm' />
                             <Box>
                                 <b>{each.isGroupChat ? each.chatName : otherUser.name}</b>
                             </Box>
