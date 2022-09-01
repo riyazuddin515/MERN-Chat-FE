@@ -4,6 +4,7 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { ChatState } from '../context/ChatContext'
 import { getOtherUser } from '../utils/getOtherUser'
+import GroupModal from './GroupModal'
 
 const MyChat = () => {
 
@@ -11,7 +12,6 @@ const MyChat = () => {
     const { loggedInUser, chat, setChat, selectedChat, setSelectedChat } = ChatState()
 
     useEffect(() => {
-        console.log('My chat useEffect invoked.')
         const fetchChat = async () => {
             try {
                 const user = JSON.parse(localStorage.getItem('user'))
@@ -35,7 +35,8 @@ const MyChat = () => {
             }
         }
         fetchChat()
-    }, [])
+        // eslint-disable-next-line
+    }, [toast])
 
     return (
         <Box
@@ -47,7 +48,9 @@ const MyChat = () => {
         >
             <Box display='flex' justifyContent='space-between' alignItems='center'>
                 <Heading size='md'>My Chats</Heading>
-                <Button leftIcon={<AddIcon />}>New Group</Button>
+                <GroupModal>
+                    <Button leftIcon={<AddIcon />}>New Group</Button>
+                </GroupModal>
             </Box>
             <Stack overflowY='scroll' width='100%' mt={5}>
                 {

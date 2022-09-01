@@ -58,28 +58,7 @@ const SearchDrawer = () => {
                 },
             };
             const res = await axios.get(`/users?search=${searchInput}`, config)
-            if (res.data.success) {
-                if (res.data.result.length === 0) {
-                    toast({
-                        title: "No Users found.",
-                        description: "No users found with give input.",
-                        status: "error",
-                        duration: 3000,
-                        isClosable: true,
-                        position: "bottom-left",
-                    });
-                }
-                setSearchResult(res.data.result)
-            } else {
-                toast({
-                    title: "Error Occured!",
-                    description: res.data.message,
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "bottom-left",
-                });
-            }
+            setSearchResult(res.data)
         } catch (error) {
             toast({
                 title: "Error Occured!",
@@ -93,7 +72,7 @@ const SearchDrawer = () => {
         setLoading(false)
     }
 
-    const hanldeOnUserClick = async (id) => {
+    const handleOnUserClick = async (id) => {
         try {
             const config = {
                 headers: {
@@ -182,7 +161,7 @@ const SearchDrawer = () => {
                             loading ?
                                 <ChatLoading /> :
                                 searchResult.map(user => (
-                                    <UserItem key={user._id} user={user} handleOnUserClick={hanldeOnUserClick} />
+                                    <UserItem key={user._id} user={user} handleOnUserClick={handleOnUserClick} />
                                 ))
                         }
                     </DrawerBody>
