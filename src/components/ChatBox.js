@@ -7,6 +7,7 @@ import { getOtherUser } from '../utils/getOtherUser'
 import SingleMessage from './SingleMessage'
 import { io } from 'socket.io-client'
 import ProfileModal from './ProfileModal'
+import GroupInfoModal from './GroupInfoModal'
 let socket = io('http://localhost:4000');
 
 const ChatBox = () => {
@@ -21,36 +22,37 @@ const ChatBox = () => {
     useEffect(() => {
         socket.on('receive-message', message => {
             setNewArrivalMessage(message)
-            console.log(message)
         })
-    }, [socket])
+    })
 
     useEffect(() => {
 
         if (newArrivalMessage) {
-            if (selectedChat == null) {
-                toast({
-                    title: `${newArrivalMessage.sender.name} sent a message.`,
-                    description: newArrivalMessage.content,
-                    status: 'success',
-                    duration: 2000,
-                    isClosable: false,
-                    position: 'bottom-left'
-                })
-                return
-            }
-            selectedChat._id === newArrivalMessage.chat?._id
-                ? setMessages(pre => [...pre, newArrivalMessage])
-                : toast({
-                    title: `${newArrivalMessage.sender.name} sent a message.`,
-                    description: newArrivalMessage.content,
-                    status: 'success',
-                    duration: 2000,
-                    isClosable: false,
-                    position: 'bottom-left'
-                })
-        }
 
+            selectedChat?._id === newArrivalMessage.chat?._id && setMessages(pre => [...pre, newArrivalMessage])
+            if (selectedChat?._id !== newArrivalMessage.chat?._id) {
+                console.log('inside if')
+                newArrivalMessage.chat.isGroupChat
+                    ? toast({
+                        title: `New Message in ${newArrivalMessage.chat.chatName}`,
+                        description: `${newArrivalMessage.sender.name}: ${newArrivalMessage.content}`,
+                        status: 'success',
+                        duration: 2000,
+                        isClosable: false,
+                        position: 'bottom-left'
+                    })
+                    : toast({
+                        title: `${newArrivalMessage.sender.name} sent a message.`,
+                        description: newArrivalMessage.content,
+                        status: 'success',
+                        duration: 2000,
+                        isClosable: false,
+                        position: 'bottom-left'
+                    })
+            }
+
+        }
+        // eslint-disable-next-line
     }, [newArrivalMessage])
 
     useEffect(() => {
@@ -113,7 +115,7 @@ const ChatBox = () => {
     return (
         <Box
             display={{ base: selectedChat ? "flex" : "none", md: "flex" }}
-            width={selectedChat ? '100%' : '70%'}
+            width={{ base: selectedChat ? '100%' : '70%', md: '70%' }}
             height='100%' borderRadius='lg'
             backgroundColor='white' p={2}
             flexDir='column'
@@ -121,23 +123,30 @@ const ChatBox = () => {
             {
                 selectedChat
                     ?
-                    <Box w="100%" height='100%'
+                    <Box height='100%'
                         display='flex' flexDir='column'
                     >
                         <Box
-                            w="100%" p={2}
+                            p={2}
                             display='flex' justifyContent='space-between'
                         >
                             <IconButton icon={<ArrowBackIcon />}
                                 onClick={() => setSelectedChat(null)}
                             />
                             <Heading size='lg'>{selectedChat.isGroupChat ? selectedChat.chatName : getOtherUser(loggedInUser, selectedChat.users).name}</Heading>
-                            <ProfileModal user={getOtherUser(loggedInUser, selectedChat.users)}>
-                                <IconButton icon={<InfoIcon />} />
-                            </ProfileModal>
+                            {
+                                selectedChat.isGroupChat
+                                    ? <GroupInfoModal groupChat={selectedChat}>
+                                        <IconButton icon={<InfoIcon />} />
+                                    </GroupInfoModal>
+                                    : <ProfileModal user={getOtherUser(loggedInUser, selectedChat.users)}>
+                                        <IconButton icon={<InfoIcon />} />
+                                    </ProfileModal>
+                            }
+
                         </Box>
                         <Box
-                            w="100%" h="100%" p={3} mb={2}
+                            h="100%" p={3} mb={2}
                             display='flex' flexDir='column-reverse'
                             borderRadius="lg" overflowY="scroll"
                             backgroundColor='#E2E2E2'

@@ -13,7 +13,6 @@ import {
     Input,
     useToast,
     Box,
-    Stack,
     Badge,
     Text,
 } from '@chakra-ui/react'
@@ -146,7 +145,7 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
                             <Input type='text' placeholder='Search Users'
                                 onChange={(e) => handleSearch(e.target.value)} />
                         </FormControl>
-                        <Stack direction='row' mt={2}>
+                        <Box display='flex' flexWrap='wrap' gap={1} mt={2} width='100%'>
                             {
                                 selectedUsers.map(user => (
                                     <Badge
@@ -165,7 +164,7 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
                                     </Badge>
                                 ))
                             }
-                        </Stack>
+                        </Box>
                         <Box maxH='250px' overflow='scroll' mt={2}>
                             {
                                 loading

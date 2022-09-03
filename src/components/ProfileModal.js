@@ -9,7 +9,7 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
 
     const { loggedInUser, setLoggedInUser } = ChatState()
 
-    const [name, setName] = useState(loggedInUser.name)
+    const [name, setName] = useState(user.name)
 
     const handleImageSelect = (e) => {
         console.log(e.target.files[0])
@@ -76,7 +76,7 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel>Email</FormLabel>
-                                    <Input type='email' value={loggedInUser.email} disabled />
+                                    <Input type='email' value={user.email} disabled />
                                 </FormControl>
                             </>
                         }
