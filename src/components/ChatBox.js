@@ -12,7 +12,7 @@ let socket = io('http://localhost:4000');
 
 const ChatBox = () => {
 
-    const { loggedInUser, selectedChat, setSelectedChat } = ChatState()
+    const { loggedInUser, chat, setChat, selectedChat, setSelectedChat } = ChatState()
     const [newMessage, setNewMessage] = useState('')
     const [messages, setMessages] = useState([])
     const [newArrivalMessage, setNewArrivalMessage] = useState(null)
@@ -22,6 +22,7 @@ const ChatBox = () => {
     useEffect(() => {
         socket.on('receive-message', message => {
             setNewArrivalMessage(message)
+            updateLastMessage(message)
         })
     })
 
@@ -29,7 +30,9 @@ const ChatBox = () => {
 
         if (newArrivalMessage) {
 
-            selectedChat?._id === newArrivalMessage.chat?._id && setMessages(pre => [...pre, newArrivalMessage])
+            selectedChat?._id === newArrivalMessage.chat?._id &&
+                setMessages(pre => [...pre, newArrivalMessage])
+
             if (selectedChat?._id !== newArrivalMessage.chat?._id) {
                 console.log('inside if')
                 newArrivalMessage.chat.isGroupChat
@@ -87,6 +90,16 @@ const ChatBox = () => {
         }
     }, [selectedChat, loggedInUser, toast])
 
+    const updateLastMessage = (lastMessage) => {
+        const r = chat.map(each => {
+            if (each._id === lastMessage.chat._id) {
+                each.lastMessage = { ...lastMessage }
+            }
+            return each
+        })
+        setChat(r)
+    }
+
     const sendMessage = async (e) => {
         e.preventDefault()
         try {
@@ -95,10 +108,12 @@ const ChatBox = () => {
                     Authorization: `Bearer ${loggedInUser.token}`,
                 },
             };
-            const res = await axios.post('/chat/messages/', { content: newMessage, chat: selectedChat._id }, config)
-            socket.emit('send-message', res.data)
-            setMessages([...messages, res.data])
+            const { data } = await axios.post('/chat/messages/', { content: newMessage, chat: selectedChat._id }, config)
+            socket.emit('send-message', data)
+            setMessages([...messages, data])
+            updateLastMessage(data)
         } catch (error) {
+            console.log(error)
             toast({
                 title: 'Error Occured',
                 description: error.response.data,

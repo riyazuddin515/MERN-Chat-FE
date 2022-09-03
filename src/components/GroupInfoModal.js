@@ -31,9 +31,7 @@ const GroupInfoModal = ({ groupChat, children }) => {
                         <AvatarGroup size='md' max={10} mt={3}>
                             {
                                 groupChat.users.map(user => {
-                                    console.log(user)
-                                    return <Avatar name={user.name} src={user.profilePic} />
-
+                                    return <Avatar key={user._id} name={user.name} src={user.profilePic} />
                                 })
                             }
                         </AvatarGroup>

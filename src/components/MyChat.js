@@ -1,5 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons'
-import { Avatar, Box, Button, Heading, Stack, useToast } from '@chakra-ui/react'
+import { Avatar, Box, Button, Heading, Stack, Text, useToast } from '@chakra-ui/react'
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { ChatState } from '../context/ChatContext'
@@ -68,6 +68,13 @@ const MyChat = () => {
                                 name={each.isGroupChat ? each.chatName : otherUser.name} size='sm' />
                             <Box>
                                 <b>{each.isGroupChat ? each.chatName : otherUser.name}</b>
+                                {each.lastMessage && each.isGroupChat
+                                    ? <Text> {`${each.lastMessage.sender._id === loggedInUser._id
+                                        ? 'ME'
+                                        : each.lastMessage.sender.name
+                                        }: ${each.lastMessage.content}`}</Text>
+                                    : <Text>{each.lastMessage?.content}</Text>
+                                }
                             </Box>
                         </Box>
                     })
