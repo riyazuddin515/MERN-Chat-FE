@@ -4,7 +4,7 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { ChatState } from '../context/ChatContext'
 import { getOtherUser } from '../utils/getOtherUser'
-import GroupModal from './GroupModal'
+import GroupModal from './group_chat/GroupModal'
 
 const MyChat = () => {
 

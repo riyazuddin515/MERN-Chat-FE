@@ -7,7 +7,8 @@ import { getOtherUser } from '../utils/getOtherUser'
 import SingleMessage from './SingleMessage'
 import { io } from 'socket.io-client'
 import ProfileModal from './ProfileModal'
-import GroupInfoModal from './GroupInfoModal'
+import GroupInfoModal from './group_chat/GroupInfoModal'
+// import './ChatBox.css'
 let socket = io('http://localhost:4000');
 
 const ChatBox = () => {
@@ -34,7 +35,6 @@ const ChatBox = () => {
                 setMessages(pre => [...pre, newArrivalMessage])
 
             if (selectedChat?._id !== newArrivalMessage.chat?._id) {
-                console.log('inside if')
                 newArrivalMessage.chat.isGroupChat
                     ? toast({
                         title: `New Message in ${newArrivalMessage.chat.chatName}`,
@@ -53,7 +53,6 @@ const ChatBox = () => {
                         position: 'bottom-left'
                     })
             }
-
         }
         // eslint-disable-next-line
     }, [newArrivalMessage])
@@ -102,6 +101,9 @@ const ChatBox = () => {
 
     const sendMessage = async (e) => {
         e.preventDefault()
+        if (!newMessage) {
+            return
+        }
         try {
             const config = {
                 headers: {
@@ -161,6 +163,7 @@ const ChatBox = () => {
 
                         </Box>
                         <Box
+                            className='chat-box'
                             h="100%" p={3} mb={2}
                             display='flex' flexDir='column-reverse'
                             borderRadius="lg" overflowY="scroll"

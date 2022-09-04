@@ -17,8 +17,8 @@ import {
     Text,
 } from '@chakra-ui/react'
 import axios from 'axios'
-import { ChatState } from '../context/ChatContext'
-import UserItem from './UserItem'
+import { ChatState } from '../../context/ChatContext'
+import UserItem from '../UserItem'
 import { CloseIcon } from '@chakra-ui/icons'
 
 const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
