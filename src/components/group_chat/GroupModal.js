@@ -11,72 +11,21 @@ import {
     Button,
     FormControl,
     Input,
-    useToast,
-    Box,
-    Badge,
-    Text,
+    useToast
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { ChatState } from '../../context/ChatContext'
-import UserItem from '../UserItem'
-import { CloseIcon } from '@chakra-ui/icons'
+import Search from '../Search'
 
 const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
 
     const toast = useToast()
     const { loggedInUser } = ChatState()
 
+    const [loading, setLoading] = useState(false)
     const [groupName, setGroupName] = useState('')
     const [selectedUsers, setSelectedUsers] = useState([])
     const [searchResult, setSearchResult] = useState([])
-    const [loading, setLoading] = useState(false)
-
-    const handleSearch = async (searchInput) => {
-        if (!searchInput) {
-            setSearchResult([])
-            return
-        }
-        try {
-            setLoading(true)
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${loggedInUser.token}`,
-                },
-            };
-            const res = await axios.get(`/users?search=${searchInput}`, config)
-            setSearchResult(res.data)
-        } catch (error) {
-            console.log(error)
-            toast({
-                title: "Error Occured!",
-                description: error.message,
-                status: "error",
-                duration: 2000,
-                isClosable: true,
-                position: "bottom-left",
-            });
-        }
-        setLoading(false)
-    }
-
-    const handleOnUserClick = (user) => {
-        if (selectedUsers.includes(user)) {
-            toast({
-                title: "User already selected",
-                description: "",
-                status: "error",
-                duration: 2000,
-                isClosable: true,
-                position: "top-center",
-            });
-            return
-        }
-        setSelectedUsers([user, ...selectedUsers])
-    }
-
-    const handleOnClose = (user) => {
-        setSelectedUsers(selectedUsers.filter(each => each._id !== user._id))
-    }
 
     const createGroup = async () => {
         if (!groupName) {
@@ -100,6 +49,7 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
             return
         }
         try {
+            setLoading(true)
             const config = {
                 headers: {
                     Authorization: `Bearer ${loggedInUser.token}`,
@@ -111,6 +61,13 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
                 setChat([data, ...chat])
             }
             onClose()
+            toast({
+                title: 'Chat Created',
+                status: 'success',
+                duration: 2000,
+                isClosable: false,
+                position: 'bottom-center'
+            })
         } catch (error) {
             console.log(error)
             toast({
@@ -122,6 +79,7 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
                 position: 'bottom-left'
             })
         }
+        setLoading(false)
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -130,6 +88,7 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
             <span onClick={onOpen}>{children}</span>
             <Modal isOpen={isOpen} onClose={() => {
                 setSearchResult([])
+                setSelectedUsers([])
                 onClose()
             }}>
                 <ModalOverlay />
@@ -141,46 +100,16 @@ const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
                             <Input type='text' placeholder='Group Name'
                                 value={groupName} onChange={(e) => setGroupName(e.target.value)} />
                         </FormControl>
-                        <FormControl mt={2}>
-                            <Input type='text' placeholder='Search Users'
-                                onChange={(e) => handleSearch(e.target.value)} />
-                        </FormControl>
-                        <Box display='flex' flexWrap='wrap' gap={1} mt={2} width='100%'>
-                            {
-                                selectedUsers.map(user => (
-                                    <Badge
-                                        key={user._id}
-                                        backgroundColor='green'
-                                        color='white'
-                                        borderRadius='md'
-                                        display='flex'
-                                        alignItems='center'
-                                        gap={1}
-                                    >
-                                        <Text>{user.name}</Text>
-                                        <CloseIcon w={2} h={3} cursor='pointer'
-                                            onClick={() => handleOnClose(user)}
-                                        />
-                                    </Badge>
-                                ))
-                            }
-                        </Box>
-                        <Box maxH='250px' overflow='scroll' mt={2}>
-                            {
-                                loading
-                                    ? <p> Loading</p>
-                                    : searchResult.map(each => (
-                                        <UserItem key={each._id} user={each}
-                                            handleOnUserClick={() => handleOnUserClick(each)}
-                                        />
-                                    ))
-                            }
-                        </Box>
+                        <Search
+                            searchResult={searchResult} setSearchResult={setSearchResult}
+                            selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} />
                     </ModalBody>
                     <ModalFooter mt='-5'>
-                        <Button colorScheme='green'
+                        <Button colorScheme='green' isLoading={loading} loadingText='Creating Chat'
                             onClick={createGroup}
-                        >Create Group</Button>
+                        >
+                            Create Group
+                        </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

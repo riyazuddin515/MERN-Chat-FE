@@ -130,6 +130,14 @@ const Signup = ({ isSignup }) => {
             <FormControl>
                 <Button mt='10px' colorScheme='green' color='white' type='submit' width='100%'
                     onClick={(e) => handleForm(e)} isLoading={loading}>{isSignup ? 'Signup' : 'Login'}</Button>
+                {
+                    !isSignup &&
+                    <Button mt='10px' colorScheme='red' color='white' type='submit' width='100%'
+                        onClick={(e) => {
+                            setEmail(e.target.innerText)
+                            console.log(e.target.innerText)
+                        }} isLoading={loading}>Login with Guest Credentials</Button>
+                }
             </FormControl>
         </VStack>
     )
