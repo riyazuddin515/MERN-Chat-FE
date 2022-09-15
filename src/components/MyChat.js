@@ -64,7 +64,7 @@ const MyChat = () => {
                             onClick={() => setSelectedChat(each)}
                         >
                             <Avatar
-                                // src={otherUser.profilePic}
+                                src={each.isGroupChat ? "" : otherUser.profilePic}
                                 name={each.isGroupChat ? each.chatName : otherUser.name} size='sm' />
                             <Box>
                                 <b>{each.isGroupChat ? each.chatName : otherUser.name}</b>

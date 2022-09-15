@@ -2,6 +2,12 @@ import { Avatar, Box, Button, Divider, FormControl, FormLabel, Input, Modal, Mod
 import axios from 'axios'
 import React, { useState } from 'react'
 import { ChatState } from '../context/ChatContext'
+import { storage } from '../utils/FirebaseSetup'
+import {
+    ref,
+    uploadBytesResumable,
+    getDownloadURL
+} from "firebase/storage";
 
 const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
     const toast = useToast()
@@ -9,21 +15,52 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
 
     const { loggedInUser, setLoggedInUser } = ChatState()
 
+    const [loading, setLoading] = useState(false)
+    const [image, setImage] = useState("")
     const [name, setName] = useState(user.name)
 
-    const handleImageSelect = (e) => {
-        console.log(e.target.files[0])
+    const handleImageSelect = async (e) => {
+        setImage(e.target.files[0])
     }
 
-    const handleProfileInfoUpdate = async () => {
+    const handleRemoveProfilePic = () => {
+        setImage('')
+        handleProfileInfoUpdate()
+    }
+
+    const handleUploadImage = async () => {
+        const storageRef = ref(storage, `/images/${loggedInUser._id}`);
+        setLoading(true)
+        const uploadTask = uploadBytesResumable(storageRef, image);
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                console.log(percent);
+            },
+            (err) => console.log(err),
+            () => {
+                // download url
+                getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                    handleProfileInfoUpdate(url)
+                });
+            }
+        );
+    }
+
+    const handleProfileInfoUpdate = async (url) => {
         try {
+            if (!loading) {
+                setLoading(true)
+            }
             const config = {
                 headers: {
                     Authorization: `Bearer ${loggedInUser.token}`,
                 },
             };
             const update = {
-                name: name
+                name: name,
+                profilePic: url
             }
             const res = await axios.put('/users/update', update, config)
             setLoggedInUser(res.data)
@@ -38,6 +75,8 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
                 position: 'center'
             })
         }
+        setLoading(false)
+        setImage('')
     }
 
     return (
@@ -60,7 +99,8 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
                                 <Box width='100%' display='flex' alignItems='center' justifyContent='center'>
                                     {
                                         user.profilePic.length !== 0 &&
-                                        <Button colorScheme='red' variant='ghost' mr={3} >
+                                        <Button colorScheme='red' variant='ghost' mr={3} onClick={handleRemoveProfilePic}
+                                            isLoading={loading} loadingText='Removing'>
                                             Remove Image
                                         </Button>
                                     }
@@ -68,6 +108,13 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
                                     <input type='file' id='image-input' style={{ display: 'none' }}
                                         onChange={(e) => handleImageSelect(e)}
                                     />
+                                    {
+                                        image &&
+                                        <Button colorScheme='green' variant='ghost' ml={3} onClick={handleUploadImage}
+                                            isLoading={loading} loadingText='Uploading'>
+                                            Upload Image
+                                        </Button>
+                                    }
                                 </Box>
                                 <Divider orientation='horizontal' />
                                 <FormControl>
