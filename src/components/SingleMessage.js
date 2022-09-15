@@ -1,11 +1,13 @@
+import { Text } from '@chakra-ui/react'
 import React from 'react'
 
-const SingleMessage = ({ message, loggedInUser }) => {
+const SingleMessage = ({ message, loggedInUser, isGroupChat }) => {
     return (
         <div style={{
             margin: '5px',
             display: 'flex',
-            justifyContent: `${message.sender._id === loggedInUser._id ? 'flex-end' : 'flex-start'}`
+            flexDirection: 'column',
+            alignItems: `${message.sender._id === loggedInUser._id ? 'flex-end' : 'flex-start'}`
         }}
         >
             <span style={{
@@ -14,7 +16,13 @@ const SingleMessage = ({ message, loggedInUser }) => {
                 color: `${message.sender._id === loggedInUser._id ? 'white' : 'balck'}`,
                 borderRadius: '20px',
                 maxWidth: '75%'
-            }}>{message.content}</span>
+            }}>
+                {message.content}
+            </span>
+            {isGroupChat && message.sender._id !== loggedInUser._id &&
+                <Text fontSize='sm'>{message.sender.name}</Text>
+            }
+
         </div>
     )
 }

@@ -10,6 +10,7 @@ export const ChatProvider = props => {
     const [loggedInUser, setLoggedInUser] = useState(null)
     const [chat, setChat] = useState([])
     const [selectedChat, setSelectedChat] = useState(null)
+    const [notification, setNotification] = useState([])
 
     useEffect(() => {
         if (loggedInUser) {
@@ -31,7 +32,8 @@ export const ChatProvider = props => {
             {
                 loggedInUser, setLoggedInUser,
                 chat, setChat,
-                selectedChat, setSelectedChat
+                selectedChat, setSelectedChat,
+                notification, setNotification
             }}>
             {props.children}
         </ChatContext.Provider>

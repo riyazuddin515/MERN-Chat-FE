@@ -15,7 +15,7 @@ const Home = () => {
             display: 'flex', flexDirection: 'column', alignItems: 'center'
         }}>
             <Header />
-            <Box width='98%' height='90vh'
+            <Box width='98%' height='100%' overflowY='scroll' mb='1vh'
                 display='flex' gap={3} justifyContent='center' mt={2}>
                 {loggedInUser && <MyChat />}
                 {loggedInUser && <ChatBox />}

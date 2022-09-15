@@ -13,7 +13,7 @@ let socket = io('http://localhost:4000');
 
 const ChatBox = () => {
 
-    const { loggedInUser, chat, setChat, selectedChat, setSelectedChat } = ChatState()
+    const { loggedInUser, chat, setChat, selectedChat, setSelectedChat, setNotification } = ChatState()
     const [newMessage, setNewMessage] = useState('')
     const [messages, setMessages] = useState([])
     const [newArrivalMessage, setNewArrivalMessage] = useState(null)
@@ -31,27 +31,18 @@ const ChatBox = () => {
 
         if (newArrivalMessage) {
 
+            if (chat.length === 0) {
+                setChat([newArrivalMessage.chat]);
+                return;
+            }
+
             selectedChat?._id === newArrivalMessage.chat?._id &&
                 setMessages(pre => [...pre, newArrivalMessage])
 
             if (selectedChat?._id !== newArrivalMessage.chat?._id) {
-                newArrivalMessage.chat.isGroupChat
-                    ? toast({
-                        title: `New Message in ${newArrivalMessage.chat.chatName}`,
-                        description: `${newArrivalMessage.sender.name}: ${newArrivalMessage.content}`,
-                        status: 'success',
-                        duration: 2000,
-                        isClosable: false,
-                        position: 'bottom-left'
-                    })
-                    : toast({
-                        title: `${newArrivalMessage.sender.name} sent a message.`,
-                        description: newArrivalMessage.content,
-                        status: 'success',
-                        duration: 2000,
-                        isClosable: false,
-                        position: 'bottom-left'
-                    })
+                setNotification(pre =>
+                    [newArrivalMessage, ...pre.filter(e => e.chat?._id !== newArrivalMessage.chat._id)]
+                )
             }
         }
         // eslint-disable-next-line
@@ -112,6 +103,7 @@ const ChatBox = () => {
             };
             const { data } = await axios.post('/chat/messages/', { content: newMessage, chat: selectedChat._id }, config)
             socket.emit('send-message', data)
+            console.log('re', data)
             setMessages([...messages, data])
             updateLastMessage(data)
         } catch (error) {
@@ -173,7 +165,9 @@ const ChatBox = () => {
                                 {
                                     messages &&
                                     messages.map(message => (
-                                        <SingleMessage key={message._id} message={message} loggedInUser={loggedInUser} />
+                                        <SingleMessage key={message._id} message={message} loggedInUser={loggedInUser}
+                                            isGroupChat={selectedChat.isGroupChat ? true : false}
+                                        />
                                     ))
                                 }
                             </div>

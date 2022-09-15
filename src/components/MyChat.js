@@ -24,6 +24,11 @@ const MyChat = () => {
                 const { data } = await axios.get('/chat', config)
                 setChat(data)
             } catch (error) {
+                if (error.response.data === "User not found") {
+                    localStorage.removeItem('user')
+                    return
+                }
+                console.error(error)
                 toast({
                     title: 'Error Occured',
                     description: error.response.data,

@@ -3,7 +3,7 @@ import {
     Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton,
     MenuButton, MenuList, MenuItem, Menu,
     Box, Button, Input, IconButton, Heading, Avatar,
-    useDisclosure, useToast, Spinner, Tooltip
+    useDisclosure, useToast, Spinner, Tooltip, Text, Badge
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { BellIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'
@@ -15,7 +15,7 @@ import ProfileModal from './ProfileModal'
 
 const SearchDrawer = () => {
 
-    const { loggedInUser, chat, setChat, setSelectedChat } = useContext(ChatContext)
+    const { loggedInUser, chat, setChat, setSelectedChat, notification, setNotification } = useContext(ChatContext)
 
     const navigate = useNavigate()
     const toast = useToast()
@@ -109,6 +109,11 @@ const SearchDrawer = () => {
         )
     }
 
+    const handleOnNotificationClick = (c) => {
+        setSelectedChat(c.chat)
+        setNotification(pre => pre.filter(e => e.chat._id !== c.chat._id))
+    }
+
     return (
         <>
             <Box width='100%' p={2}
@@ -125,9 +130,36 @@ const SearchDrawer = () => {
                             onClick={onOpen} ref={btnRef}
                         />
                     </Tooltip>
-                    <IconButton icon={<BellIcon />} marginRight={3} />
+                    <Menu >
+                        <MenuButton as={IconButton}>
+                            <div>
+                                <BellIcon width='30px' height='20px' />
+                                {
+                                    notification.length > 0 &&
+                                    <Badge style={{
+                                        position: 'absolute', top: 0, right: 5,
+                                        backgroundColor: 'red', color: 'white',
+                                        borderRadius: '50%', padding: '3px'
+                                    }}>
+                                        {notification.length}
+                                    </Badge>
+                                }
+                            </div>
+                        </MenuButton>
+                        <MenuList>
+                            {notification.length === 0 && <Text align='center'>No Messages</Text>}
+                            {notification.map(each => (
+                                <MenuItem key={each.chat._id} onClick={() => handleOnNotificationClick(each)}>{
+                                    each.chat.isGroupChat
+                                        ? `New Message in ${each.chat.chatName}`
+                                        : `New Message from ${each.sender.name}`
+                                }</MenuItem>
+                            ))}
+
+                        </MenuList>
+                    </Menu>
                     <Menu>
-                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} ml={3}>
                             <Avatar src={loggedInUser.profilePic} name={loggedInUser.name} size='sm' />
                         </MenuButton>
                         <MenuList>
