@@ -12,6 +12,12 @@ export const ChatProvider = props => {
     const [selectedChat, setSelectedChat] = useState(null)
 
     useEffect(() => {
+        if (loggedInUser) {
+            localStorage.setItem('user', JSON.stringify(loggedInUser))
+        }
+    }, [loggedInUser])
+
+    useEffect(() => {
         const cache = localStorage.getItem('user')
         setLoggedInUser(JSON.parse(cache))
 

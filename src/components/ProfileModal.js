@@ -8,6 +8,7 @@ import {
     uploadBytesResumable,
     getDownloadURL
 } from "firebase/storage";
+import ImageResizer from '../utils/ImageResizer'
 
 const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
     const toast = useToast()
@@ -20,7 +21,8 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
     const [name, setName] = useState(user.name)
 
     const handleImageSelect = async (e) => {
-        setImage(e.target.files[0])
+        const file = await ImageResizer(e.target.files[0])
+        setImage(file)
     }
 
     const handleRemoveProfilePic = () => {
@@ -99,8 +101,7 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
                                 <Box width='100%' display='flex' alignItems='center' justifyContent='center'>
                                     {
                                         user.profilePic.length !== 0 &&
-                                        <Button colorScheme='red' variant='ghost' mr={3} onClick={handleRemoveProfilePic}
-                                            isLoading={loading} loadingText='Removing'>
+                                        <Button colorScheme='red' variant='ghost' mr={3} onClick={handleRemoveProfilePic}>
                                             Remove Image
                                         </Button>
                                     }

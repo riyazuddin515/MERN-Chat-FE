@@ -3,11 +3,14 @@ import { FormControl, FormLabel, Input, useToast } from '@chakra-ui/react'
 import { VStack, Button } from '@chakra-ui/react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { ChatState } from '../../context/ChatContext'
 
 const Signup = ({ isSignup }) => {
 
     const toast = useToast()
     const navigate = useNavigate()
+
+    const { setLoggedInUser } = ChatState()
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -52,16 +55,10 @@ const Signup = ({ isSignup }) => {
 
     const auth = async () => {
         try {
+            setLoading(true)
+            let res;
             if (isSignup) {
-                setLoading(true)
-                const res = await axios.post(
-                    '/auth/signup',
-                    {
-                        "name": name,
-                        "email": email,
-                        "password": password
-                    }
-                )
+                res = await axios.post('/auth/signup', { "name": name, "email": email, "password": password })
                 toast({
                     title: 'Success',
                     description: 'Account created.',
@@ -69,18 +66,8 @@ const Signup = ({ isSignup }) => {
                     duration: 2000,
                     isClosable: false
                 })
-                localStorage.setItem('user', JSON.stringify(res.data))
-                navigate('/', { replace: true })
             } else {
-                console.log('login begin')
-                setLoading(true)
-                const res = await axios.post(
-                    '/auth/login',
-                    {
-                        "email": email,
-                        "password": password
-                    }
-                )
+                res = await axios.post('/auth/login', { "email": email, "password": password })
                 toast({
                     title: 'Success',
                     description: 'Logged in.',
@@ -88,9 +75,9 @@ const Signup = ({ isSignup }) => {
                     duration: 2000,
                     isClosable: false
                 })
-                localStorage.setItem('user', JSON.stringify(res.data))
-                navigate('/', { replace: true })
             }
+            setLoggedInUser(res.data)
+            navigate('/', { replace: true })
         } catch (error) {
             toast({
                 title: 'Error Occured',
