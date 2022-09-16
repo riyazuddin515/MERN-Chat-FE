@@ -10,8 +10,9 @@ import { BellIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'
 import { ChatContext } from '../context/ChatContext'
 import axios from 'axios'
 import UserItem from './UserItem'
-import ChatLoading from './ChatLoading'
+import ChatLoading from './chat/ChatLoading'
 import ProfileModal from './ProfileModal'
+let controller;
 
 const SearchDrawer = () => {
 
@@ -23,7 +24,6 @@ const SearchDrawer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
 
-    const [searchInput, setSearchInput] = useState('')
     const [searchResult, setSearchResult] = useState([])
     const [loading, setLoading] = useState(false)
 
@@ -33,33 +33,41 @@ const SearchDrawer = () => {
     }
 
     const handleClose = () => {
-        setSearchInput('')
         setSearchResult([])
     }
 
-    const handleSearch = async () => {
+    const handleSearch = async (s) => {
         try {
-            if (!searchInput) {
+            if (!s) {
                 toast({
-                    title: "Error Occured!",
                     description: "Search field can't be empty",
                     status: "error",
                     duration: 2000,
-                    isClosable: true,
-                    position: "top-left",
+                    position: "bottom-right",
                 });
                 setSearchResult([])
                 return
             }
             setLoading(true)
+            if (controller) {
+                controller.abort();
+            }
+            controller = new AbortController()
+            const signal = controller.signal;
             const config = {
+                signal,
                 headers: {
                     Authorization: `Bearer ${loggedInUser.token}`,
                 },
             };
-            const res = await axios.get(`/users?search=${searchInput}`, config)
+            const res = await axios.get(`/users?search=${s}`, config)
             setSearchResult(res.data)
+            console.log(res)
         } catch (error) {
+            if (error.message === "canceled") {
+                return
+            }
+            console.log(error)
             toast({
                 title: "Error Occured!",
                 description: "Failed to Load the Search Results",
@@ -70,6 +78,9 @@ const SearchDrawer = () => {
             });
         }
         setLoading(false)
+        return () => {
+            console.log('hello')
+        }
     }
 
     const handleOnUserClick = async (id) => {
@@ -87,12 +98,10 @@ const SearchDrawer = () => {
             onClose()
         } catch (error) {
             toast({
-                title: 'Error Occured',
                 description: error.response.data,
                 status: 'error',
                 duration: 2000,
-                isClosable: false,
-                position: 'bottom-left'
+                position: 'bottom-right'
             })
         }
     }
@@ -186,8 +195,8 @@ const SearchDrawer = () => {
                     <DrawerHeader>Search for user</DrawerHeader>
                     <DrawerBody>
                         <Box display='flex' gap={1} mb={3}>
-                            <Input placeholder='Name or Email ID' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
-                            <IconButton aria-label='Search database' icon={<SearchIcon />} onClick={handleSearch} />
+                            <Input placeholder='Name or Email ID' onChange={(e) => handleSearch(e.target.value)} />
+                            {/* <IconButton aria-label='Search database' icon={<SearchIcon />} onClick={handleSearch} /> */}
                         </Box>
                         {
                             loading ?

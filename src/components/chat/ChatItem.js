@@ -1,6 +1,6 @@
 import { Avatar, Box, Text } from '@chakra-ui/react'
 import React from 'react'
-import { ChatState } from '../context/ChatContext'
+import { ChatState } from '../../context/ChatContext'
 
 const ChatItem = ({ chat, otherUser }) => {
     const { selectedChat, setSelectedChat, loggedInUser } = ChatState()

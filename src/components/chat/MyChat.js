@@ -2,10 +2,10 @@ import { AddIcon } from '@chakra-ui/icons'
 import { Box, Button, Heading, Stack, useToast } from '@chakra-ui/react'
 import axios from 'axios'
 import React, { useEffect } from 'react'
-import { ChatState } from '../context/ChatContext'
-import { getOtherUser } from '../utils/getOtherUser'
-import ChatItem from './ChatItem'
-import GroupModal from './group_chat/GroupModal'
+import { ChatState } from '../../context/ChatContext'
+import { getOtherUser } from '../../utils/getOtherUser'
+import ChatItem from '../chat/ChatItem'
+import GroupModal from '../group_chat/GroupModal'
 
 const MyChat = () => {
 
@@ -61,10 +61,9 @@ const MyChat = () => {
             <Stack overflowY='scroll' width='100%' mt={5}>
                 {
                     chat && loggedInUser &&
-                    chat.map(each => {
-                        const otherUser = getOtherUser(loggedInUser, each.users)
-                        return <ChatItem chat={each} otherUser={otherUser} />
-                    })
+                    chat.map(each => (
+                        <ChatItem key={each._id} chat={each} otherUser={getOtherUser(loggedInUser, each.users)} />
+                    ))
                 }
             </Stack>
         </Box>

@@ -1,8 +1,8 @@
 import { Box } from '@chakra-ui/react'
 import React from 'react'
-import ChatBox from '../components/ChatBox'
+import ChatBox from '../components/chat/ChatBox'
 import Header from '../components/Header'
-import MyChat from '../components/MyChat'
+import MyChat from '../components/chat/MyChat'
 import { ChatState } from '../context/ChatContext'
 
 const Home = () => {

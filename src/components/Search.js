@@ -4,6 +4,7 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { ChatState } from '../context/ChatContext'
 import UserItem from './UserItem'
+let controller;
 
 const Search = ({ searchResult, setSearchResult, selectedUsers, setSelectedUsers }) => {
 
@@ -18,7 +19,13 @@ const Search = ({ searchResult, setSearchResult, selectedUsers, setSelectedUsers
         }
         try {
             setLoading(true)
+            if (controller) {
+                controller.abort();
+            }
+            controller = new AbortController()
+            const signal = controller.signal;
             const config = {
+                signal,
                 headers: {
                     Authorization: `Bearer ${loggedInUser.token}`,
                 },
@@ -26,6 +33,9 @@ const Search = ({ searchResult, setSearchResult, selectedUsers, setSelectedUsers
             const res = await axios.get(`/users?search=${searchInput}`, config)
             setSearchResult(res.data)
         } catch (error) {
+            if (error.message === "canceled") {
+                return
+            }
             console.log(error)
             toast({
                 title: "Error Occured!",
