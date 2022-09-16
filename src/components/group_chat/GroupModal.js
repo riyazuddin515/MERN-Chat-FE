@@ -17,10 +17,10 @@ import axios from 'axios'
 import { ChatState } from '../../context/ChatContext'
 import Search from '../Search'
 
-const GroupModal = ({ chat, setChat, setSelectedChat, children }) => {
+const GroupModal = ({ children }) => {
 
     const toast = useToast()
-    const { loggedInUser } = ChatState()
+    const { loggedInUser, chat, setChat, setSelectedChat } = ChatState()
 
     const [loading, setLoading] = useState(false)
     const [groupName, setGroupName] = useState('')
