@@ -3,7 +3,7 @@ import { Box, Heading, IconButton, Input, useToast, Text } from '@chakra-ui/reac
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { ChatState } from '../../context/ChatContext'
-import { getOtherUser } from '../../utils/getOtherUser'
+import { getOtherUser, isLastMessage, isSameUser, isSenderLastMessage } from '../../utils/UtilityFunctions'
 import SingleMessage from '../SingleMessage'
 import { io } from 'socket.io-client'
 import ProfileModal from '../ProfileModal'
@@ -163,10 +163,10 @@ const ChatBox = () => {
                         >
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 {
-                                    messages &&
-                                    messages.map(message => (
+                                    messages.length > 0 &&
+                                    messages.map((message, index) => (
                                         <SingleMessage key={message._id} message={message} loggedInUser={loggedInUser}
-                                            isGroupChat={selectedChat.isGroupChat ? true : false}
+                                            isSenderLastMessage={isSenderLastMessage(messages, index, loggedInUser)}
                                         />
                                     ))
                                 }

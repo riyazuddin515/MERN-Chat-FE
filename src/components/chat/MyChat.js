@@ -3,7 +3,7 @@ import { Box, Button, Heading, Stack, useToast } from '@chakra-ui/react'
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { ChatState } from '../../context/ChatContext'
-import { getOtherUser } from '../../utils/getOtherUser'
+import { getOtherUser } from '../../utils/UtilityFunctions'
 import ChatItem from '../chat/ChatItem'
 import GroupModal from '../group_chat/GroupModal'
 

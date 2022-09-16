@@ -1,28 +1,29 @@
-import { Text } from '@chakra-ui/react'
+import { Avatar } from '@chakra-ui/react'
 import React from 'react'
 
-const SingleMessage = ({ message, loggedInUser, isGroupChat }) => {
+const SingleMessage = ({ message, loggedInUser, isSenderLastMessage }) => {
     return (
         <div style={{
-            margin: '5px',
+            marginBottom: `${isSenderLastMessage ? '5px' : '1px'}`,
+            marginLeft: `${isSenderLastMessage ? '0px' : '38px'}`,
+            marginTop: '2px',
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: `${message.sender._id === loggedInUser._id ? 'flex-end' : 'flex-start'}`
+            justifyContent: `${message.sender._id === loggedInUser._id ? 'flex-end' : 'flex-start'}`,
+            alignItems: 'center',
+            gap: '5px'
         }}
         >
+            {
+                isSenderLastMessage &&
+                <Avatar src={message.sender.profilePic} name={message.sender.name} size='sm' />
+            }
             <span style={{
                 padding: '10px',
                 backgroundColor: `${message.sender._id === loggedInUser._id ? 'green' : 'white'}`,
                 color: `${message.sender._id === loggedInUser._id ? 'white' : 'balck'}`,
-                borderRadius: '20px',
+                borderRadius: '5px',
                 maxWidth: '75%'
-            }}>
-                {message.content}
-            </span>
-            {isGroupChat && message.sender._id !== loggedInUser._id &&
-                <Text fontSize='sm'>{message.sender.name}</Text>
-            }
-
+            }}>{message.content}</span>
         </div>
     )
 }
