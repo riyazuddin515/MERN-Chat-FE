@@ -101,11 +101,11 @@ const Signup = ({ isSignup }) => {
             }
             <FormControl isRequired>
                 <FormLabel>Email</FormLabel>
-                <Input type='email' onChange={(e) => setEmail(e.target.value)} />
+                <Input type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
             </FormControl>
             <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
-                <Input type='password' onChange={(e) => setPassword(e.target.value)} />
+                <Input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
             </FormControl>
             {
                 isSignup &&
@@ -120,10 +120,10 @@ const Signup = ({ isSignup }) => {
                 {
                     !isSignup &&
                     <Button mt='10px' colorScheme='red' color='white' type='submit' width='100%'
-                        onClick={(e) => {
-                            setEmail(e.target.innerText)
-                            console.log(e.target.innerText)
-                        }} isLoading={loading}>Login with Guest Credentials</Button>
+                        onClick={() => {
+                            setEmail('Guest@gmail.com')
+                            setPassword('123456')
+                        }} isLoading={loading}>Get Guest Credentials</Button>
                 }
             </FormControl>
         </VStack>

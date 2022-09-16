@@ -15,11 +15,10 @@ const MyChat = () => {
     useEffect(() => {
         const fetchChat = async () => {
             try {
-                const user = JSON.parse(localStorage.getItem('user'))
                 const config = {
                     headers: {
                         'content-type': 'application/json',
-                        Authorization: `Bearer ${user.token}`,
+                        Authorization: `Bearer ${loggedInUser.token}`,
                     },
                 };
                 const { data } = await axios.get('/chat', config)
