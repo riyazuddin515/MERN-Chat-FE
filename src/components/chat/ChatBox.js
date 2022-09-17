@@ -133,7 +133,6 @@ const ChatBox = () => {
             };
             const { data } = await axios.post('/chat/messages/', { content: newMessage, chat: selectedChat._id }, config)
             socket.emit('send-message', data)
-            console.log('re', data)
             setMessages([...messages, data])
             updateLastMessage(data)
         } catch (error) {
