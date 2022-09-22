@@ -10,7 +10,7 @@ import ProfileModal from '../ProfileModal'
 import GroupInfoModal from '../group_chat/GroupInfoModal'
 import { useRef } from 'react'
 import typingGIF from '../../asset/loading.gif'
-let socket = io('http://localhost:4000');
+let socket = io('http://localhost:5000');
 let previousTimeout;
 let selectedChatCopy;
 

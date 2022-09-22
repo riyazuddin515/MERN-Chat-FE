@@ -87,6 +87,7 @@ const GroupModal = ({ children }) => {
         <>
             <span onClick={onOpen}>{children}</span>
             <Modal isOpen={isOpen} onClose={() => {
+                setGroupName('')
                 setSearchResult([])
                 setSelectedUsers([])
                 onClose()

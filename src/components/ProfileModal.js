@@ -85,7 +85,7 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
         <>
             <span onClick={onOpen}>{children}</span>
             <Modal isOpen={isOpen} onClose={() => {
-                setName(loggedInUser.name)
+                setName(() => isLoggedInUserProfile ? loggedInUser.name : user.name)
                 onClose()
             }}>
                 <ModalOverlay />
@@ -98,29 +98,33 @@ const ProfileModal = ({ user, isLoggedInUserProfile, children }) => {
                                 <WrapItem>
                                     <Avatar name={user.name} src={user.profilePic} size='2xl' />
                                 </WrapItem>
-                                <Box width='100%' display='flex' alignItems='center' justifyContent='center'>
-                                    {
-                                        user.profilePic.length !== 0 &&
-                                        <Button colorScheme='red' variant='ghost' mr={3} onClick={handleRemoveProfilePic}>
-                                            Remove Image
-                                        </Button>
-                                    }
-                                    <label htmlFor='image-input' style={{ fontWeight: 'bold', cursor: 'pointer' }}>Choose Image</label>
-                                    <input type='file' id='image-input' style={{ display: 'none' }}
-                                        onChange={(e) => handleImageSelect(e)}
-                                    />
-                                    {
-                                        image &&
-                                        <Button colorScheme='green' variant='ghost' ml={3} onClick={handleUploadImage}
-                                            isLoading={loading} loadingText='Uploading'>
-                                            Upload Image
-                                        </Button>
-                                    }
-                                </Box>
+                                {
+                                    isLoggedInUserProfile &&
+                                    <Box width='100%' display='flex' alignItems='center' justifyContent='center'>
+                                        {
+                                            user.profilePic.length !== 0 &&
+                                            <Button colorScheme='red' variant='ghost' mr={3} onClick={handleRemoveProfilePic}>
+                                                Remove Image
+                                            </Button>
+                                        }
+                                        <label htmlFor='image-input' style={{ fontWeight: 'bold', cursor: 'pointer' }}>Choose Image</label>
+                                        <input type='file' id='image-input' style={{ display: 'none' }}
+                                            onChange={(e) => handleImageSelect(e)}
+                                        />
+                                        {
+                                            image &&
+                                            <Button colorScheme='green' variant='ghost' ml={3} onClick={handleUploadImage}
+                                                isLoading={loading} loadingText='Uploading'>
+                                                Upload Image
+                                            </Button>
+                                        }
+                                    </Box>
+                                }
                                 <Divider orientation='horizontal' />
                                 <FormControl>
                                     <FormLabel>Name</FormLabel>
-                                    <Input type='text' value={name} onChange={(e) => setName(e.target.value)} />
+                                    <Input type='text' value={name} disabled={!isLoggedInUserProfile}
+                                        onChange={(e) => setName(e.target.value)} />
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel>Email</FormLabel>
