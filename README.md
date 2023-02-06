@@ -2,7 +2,7 @@
 
 ## Demo
 
-https://mern-chat-r515.herokuapp.com/
+https://mern-chat-r515.onrender.com/
 
 ### Signup
 
